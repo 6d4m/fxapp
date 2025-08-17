@@ -2,97 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Forex Toolkit App</title>
+  <title>Forex Toolkit</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background:#f8f9fa; }
+    h1 { color: #2c3e50; }
+    table { border-collapse: collapse; margin: auto; background:white; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    th, td { border:1px solid #ccc; padding:8px 12px; }
+    th { background:#2c3e50; color:white; }
+  </style>
 </head>
-<body style="font-family: Arial, sans-serif; text-align:center; margin:20px;">
-  <h1>📊 Forex Toolkit</h1>
-  <p>Market Hours Countdown + Economic Calendar + News + Heatmap</p>
+<body>
 
-  <!-- Market Hours Countdown -->
-  <h2>⏰ Market Countdown</h2>
-  <div id="countdown"></div>
+  <h1>📊 Forex Toolkit App</h1>
+  <p>Countdown until market opens:</p>
+  <h2 id="countdown">Loading...</h2>
 
   <script>
     function updateCountdown() {
       const now = new Date();
-      const day = now.getUTCDay();
-      const hour = now.getUTCHours();
-      const minutes = now.getUTCMinutes();
-      const seconds = now.getUTCSeconds();
-      let target;
+      const utcDay = now.getUTCDay();
+      const utcHour = now.getUTCHours();
+      const utcMin = now.getUTCMinutes();
 
-      // Market closes Friday 21:00 UTC, opens Sunday 22:00 UTC
-      if (day === 5 && hour >= 21 || day === 6 || (day === 0 && hour < 22)) {
-        // Closed → countdown to Sunday 22:00 UTC
-        target = new Date();
-        target.setUTCDate(now.getUTCDate() + ((7 - day) % 7));
-        target.setUTCHours(22,0,0,0);
+      let nextOpen = new Date(now);
+      if (utcDay === 5 && utcHour >= 22 || utcDay === 6) {
+        nextOpen.setUTCDate(now.getUTCDate() + ((1 + 7 - utcDay) % 7));
+        nextOpen.setUTCHours(22,0,0,0);
+      } else if (utcDay === 0 && utcHour < 22) {
+        nextOpen.setUTCHours(22,0,0,0);
       } else {
-        document.getElementById("countdown").innerText = "Market is OPEN";
+        document.getElementById("countdown").innerText = "Market is OPEN ✅";
         return;
       }
 
-      let diff = target - now;
-      let h = Math.floor(diff / 1000 / 60 / 60);
-      let m = Math.floor(diff / 1000 / 60) % 60;
-      let s = Math.floor(diff / 1000) % 60;
-      document.getElementById("countdown").innerText = h + "h " + m + "m " + s + "s";
+      let diff = nextOpen - now;
+      let hours = Math.floor(diff / (1000*60*60));
+      let minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+      let seconds = Math.floor((diff % (1000*60)) / 1000);
+      document.getElementById("countdown").innerText = hours+"h "+minutes+"m "+seconds+"s";
     }
     setInterval(updateCountdown, 1000);
+    updateCountdown();
   </script>
 
   <hr>
+  <h2>🌍 Forex Market Sessions</h2>
+  <table>
+    <tr><th>Session</th><th>Open (UTC)</th><th>Close (UTC)</th><th>Status</th></tr>
+    <tr><td>Sydney</td><td>22:00</td><td>07:00</td><td id="sydney-status">Loading...</td></tr>
+    <tr><td>Tokyo</td><td>00:00</td><td>09:00</td><td id="tokyo-status">Loading...</td></tr>
+    <tr><td>London</td><td>08:00</td><td>17:00</td><td id="london-status">Loading...</td></tr>
+    <tr><td>New York</td><td>13:00</td><td>22:00</td><td id="ny-status">Loading...</td></tr>
+  </table>
 
-  <!-- TradingView Economic Calendar -->
-  <h2>📅 Economic Calendar</h2>
-  <div class="tradingview-widget-container">
-    <div class="tradingview-widget-container__widget"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-    {
-      "colorTheme": "light",
-      "isTransparent": false,
-      "width": "100%",
-      "height": "400",
-      "locale": "en"
+  <script>
+    function checkSession(open, close, nowHour) {
+      if (open < close) {
+        return (nowHour >= open && nowHour < close);
+      } else {
+        return (nowHour >= open || nowHour < close);
+      }
     }
-    </script>
-  </div>
+    function updateSessions() {
+      const now = new Date();
+      const hour = now.getUTCHours();
+      document.getElementById("sydney-status").innerText = checkSession(22, 7, hour) ? "OPEN ✅" : "CLOSED ❌";
+      document.getElementById("tokyo-status").innerText = checkSession(0, 9, hour) ? "OPEN ✅" : "CLOSED ❌";
+      document.getElementById("london-status").innerText = checkSession(8, 17, hour) ? "OPEN ✅" : "CLOSED ❌";
+      document.getElementById("ny-status").innerText = checkSession(13, 22, hour) ? "OPEN ✅" : "CLOSED ❌";
+    }
+    setInterval(updateSessions, 60000);
+    updateSessions();
+  </script>
 
   <hr>
-
-  <!-- TradingView Forex Heatmap -->
-  <h2>🔥 Forex Heat Map</h2>
+  <h2>📈 Live Forex Chart (TradingView)</h2>
   <div class="tradingview-widget-container">
-    <div class="tradingview-widget-container__widget"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
-    {
-      "width": "100%",
-      "height": "400",
-      "currencies": ["EUR","USD","JPY","GBP","AUD","CAD","CHF","NZD"],
-      "colorTheme": "light",
-      "locale": "en"
-    }
-    </script>
-  </div>
-
-  <hr>
-
-  <!-- TradingView Forex News -->
-  <h2>📰 Forex News</h2>
-  <div class="tradingview-widget-container">
-    <div class="tradingview-widget-container__widget"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-    {
-      "feedMode": "market",
-      "market": "forex",
-      "isTransparent": false,
-      "displayMode": "regular",
-      "width": "100%",
-      "height": "400",
-      "colorTheme": "light",
-      "locale": "en"
-    }
+    <div id="tradingview_chart"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+      new TradingView.widget({
+        "width": "100%",
+        "height": 400,
+        "symbol": "OANDA:EURUSD",
+        "interval": "60",
+        "timezone": "Etc/UTC",
+        "theme": "light",
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "hide_side_toolbar": false,
+        "allow_symbol_change": true,
+        "container_id": "tradingview_chart"
+      });
     </script>
   </div>
 
