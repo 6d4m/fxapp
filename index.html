@@ -9,49 +9,58 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
-      font-size: 20px; /* larger base text for WebView */
+      font-size: 20px;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
     }
 
     h1 {
-      color: #333;
-      font-size: 45px; /* bigger main heading for WebView */
+      font-size: 45px;
+      margin-bottom: 20px;
     }
 
     h2 {
-      color: #333;
-      font-size: 35px; /* bigger subheadings */
-    }
-
-    p {
-      font-size: 24px; /* slightly bigger paragraph text */
-    }
-
-    #countdown {
-      font-size: 36px; /* countdown bigger */
-      font-weight: bold;
-      color: #d33; /* red to make it stand out */
-      margin: 10px 0;
+      font-size: 35px;
+      margin: 20px 0;
     }
 
     table {
       border-collapse: collapse;
       margin: 20px auto;
-      font-size: 22px; /* table text bigger for WebView */
+      font-size: 22px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #fff;
+      padding: 16px;
     }
 
     th {
-      background: #f4f4f4;
-      font-size: 24px; /* table headers bigger */
-    }
-
-    table, th, td {
-      border: 1px solid #999;
-      padding: 16px; /* more padding for readability */
+      font-size: 24px;
     }
 
     td[id$="-status"] {
-      font-size: 30px; /* session statuses bigger */
+      font-size: 30px;
       font-weight: bold;
+    }
+
+    #countdown-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .circle-wrapper div {
+      transition: all 0.5s ease;
+    }
+
+    h2, #countdown-container div div {
+      text-shadow: 1px 1px 5px #000;
     }
   </style>
 </head>
@@ -59,44 +68,116 @@
   <h1>🌍 Forex Market Toolkit</h1>
 
   <h2>⏳ Market Countdown</h2>
-  <p id="countdown">Loading...</p>
+  <div id="countdown-container"></div>
 
   <script>
-    function updateCountdown() {
-      const now = new Date();
-      const day = now.getUTCDay();
-      const hour = now.getUTCHours();
-      let target;
+    const countdownContainer = document.getElementById('countdown-container');
+    const units = ['Days','Hours','Minutes','Seconds'];
+    const colors = {Days:'#FF6B6B', Hours:'#FFD93D', Minutes:'#6BCB77', Seconds:'#4D96FF'};
 
-      if (day === 5 && hour >= 22 || day === 6) {
-        target = new Date(now);
-        target.setUTCDate(now.getUTCDate() + ((1 + 7 - day) % 7));
-        target.setUTCHours(22, 0, 0, 0);
-      } else if (day === 0 && hour < 22) {
-        target = new Date(now);
-        target.setUTCHours(22, 0, 0, 0);
-      } else {
-        document.getElementById("countdown").innerText = "✅ Market is OPEN";
-        return;
-      }
+    function createCircle(id){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'circle-wrapper';
+      wrapper.style.position = 'relative';
+      wrapper.style.width = '100px';
+      wrapper.style.height = '100px';
+      wrapper.style.display = 'flex';
+      wrapper.style.flexDirection = 'column';
+      wrapper.style.alignItems = 'center';
+      wrapper.style.justifyContent = 'center';
 
-      const diff = target - now;
-      const h = Math.floor(diff / 1000 / 60 / 60);
-      const m = Math.floor((diff / 1000 / 60) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-      document.getElementById("countdown").innerText =
-        h + "h " + m + "m " + s + "s until market opens";
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("width","100");
+      svg.setAttribute("height","100");
+
+      const radius = 45;
+      const circleBg = document.createElementNS(svgNS,"circle");
+      circleBg.setAttribute("cx",50);
+      circleBg.setAttribute("cy",50);
+      circleBg.setAttribute("r",radius);
+      circleBg.setAttribute("stroke","#eee");
+      circleBg.setAttribute("stroke-width","8");
+      circleBg.setAttribute("fill","none");
+      svg.appendChild(circleBg);
+
+      const circle = document.createElementNS(svgNS,"circle");
+      circle.setAttribute("cx",50);
+      circle.setAttribute("cy",50);
+      circle.setAttribute("r",radius);
+      circle.setAttribute("stroke",colors[id]);
+      circle.setAttribute("stroke-width","8");
+      circle.setAttribute("fill","none");
+      circle.setAttribute("stroke-dasharray",2*Math.PI*radius);
+      circle.setAttribute("stroke-dashoffset",2*Math.PI*radius);
+      circle.setAttribute("transform","rotate(-90 50 50)");
+      circle.id = id+'-circle';
+      circle.style.transition='stroke-dashoffset 0.5s ease, stroke 0.5s ease';
+      svg.appendChild(circle);
+
+      const text = document.createElement('div');
+      text.id = id;
+      text.style.position='absolute';
+      text.style.fontSize='22px';
+      text.style.fontWeight='bold';
+      text.style.color='#fff';
+      wrapper.appendChild(svg);
+      wrapper.appendChild(text);
+
+      const label = document.createElement('div');
+      label.innerText = id;
+      label.style.fontSize='12px';
+      label.style.color='#fff';
+      wrapper.appendChild(label);
+
+      countdownContainer.appendChild(wrapper);
     }
-    setInterval(updateCountdown, 1000);
+
+    units.forEach(createCircle);
+
+    function getNextMarketOpen(){
+      const now = new Date();
+      let target = new Date();
+      target.setUTCHours(22,0,0,0);
+      if(now.getUTCDay()===5 && now.getUTCHours()>=22 || now.getUTCDay()===6){
+        target.setUTCDate(now.getUTCDate() + ((1+7-now.getUTCDay())%7));
+      }
+      if(now>=target) target.setUTCDate(target.getUTCDate()+1);
+      return target;
+    }
+
+    function updateCountdown(){
+      const now = new Date();
+      const target = getNextMarketOpen();
+      const diff = target-now;
+      const totalSeconds = Math.floor(diff/1000);
+
+      const days = Math.floor(totalSeconds/(3600*24));
+      const hours = Math.floor((totalSeconds%(3600*24))/3600);
+      const minutes = Math.floor((totalSeconds%3600)/60);
+      const seconds = totalSeconds%60;
+
+      const values = {Days:days, Hours:hours, Minutes:minutes, Seconds:seconds};
+      const maxValues = {Days:365, Hours:24, Minutes:60, Seconds:60};
+
+      units.forEach(unit=>{
+        document.getElementById(unit).innerText=values[unit].toString().padStart(2,'0');
+        const circle = document.getElementById(unit+'-circle');
+        const radius=circle.r.baseVal.value;
+        const circumference=2*Math.PI*radius;
+        const offset=circumference-(values[unit]/maxValues[unit])*circumference;
+        circle.setAttribute('stroke-dashoffset',offset);
+      });
+    }
+
+    setInterval(updateCountdown,1000);
     updateCountdown();
   </script>
 
   <hr>
   <h2>📊 Forex Market Sessions (UTC)</h2>
   <table>
-    <tr>
-      <th>Session</th><th>Open</th><th>Close</th><th>Status</th>
-    </tr>
+    <tr><th>Session</th><th>Open</th><th>Close</th><th>Status</th></tr>
     <tr><td>Sydney</td><td>22:00</td><td>07:00</td><td id="sydney-status">Loading…</td></tr>
     <tr><td>Tokyo</td><td>00:00</td><td>09:00</td><td id="tokyo-status">Loading…</td></tr>
     <tr><td>London</td><td>08:00</td><td>17:00</td><td id="london-status">Loading…</td></tr>
@@ -104,17 +185,15 @@
   </table>
 
   <script>
-    function checkSession(open, close, hour) {
-      return (open < close) ? (hour >= open && hour < close) : (hour >= open || hour < close);
+    function checkSession(open,close,hour){return(open<close)?(hour>=open && hour<close):(hour>=open||hour<close);}
+    function updateSessions(){
+      const hour=new Date().getUTCHours();
+      document.getElementById("sydney-status").innerText = checkSession(22,7,hour)?"OPEN ✅":"CLOSED ❌";
+      document.getElementById("tokyo-status").innerText = checkSession(0,9,hour)?"OPEN ✅":"CLOSED ❌";
+      document.getElementById("london-status").innerText = checkSession(8,17,hour)?"OPEN ✅":"CLOSED ❌";
+      document.getElementById("ny-status").innerText = checkSession(13,22,hour)?"OPEN ✅":"CLOSED ❌";
     }
-    function updateSessions() {
-      const hour = new Date().getUTCHours();
-      document.getElementById("sydney-status").innerText = checkSession(22, 7, hour) ? "OPEN ✅" : "CLOSED ❌";
-      document.getElementById("tokyo-status").innerText = checkSession(0, 9, hour) ? "OPEN ✅" : "CLOSED ❌";
-      document.getElementById("london-status").innerText = checkSession(8, 17, hour) ? "OPEN ✅" : "CLOSED ❌";
-      document.getElementById("ny-status").innerText = checkSession(13, 22, hour) ? "OPEN ✅" : "CLOSED ❌";
-    }
-    setInterval(updateSessions, 60000);
+    setInterval(updateSessions,60000);
     updateSessions();
   </script>
 
