@@ -2,43 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forex Toolkit</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
-      font-size: 19px; /* slightly bigger base text */
+      font-size: clamp(18px, 4vw, 22px); /* scales on mobile */
+    }
+
+    p {
+      font-size: clamp(19px, 4.5vw, 24px);
+    }
+
+    h1 {
+      color: #333;
+      font-size: clamp(36px, 8vw, 50px); /* responsive main heading */
+    }
+
+    h2 {
+      color: #333;
+      font-size: clamp(28px, 6vw, 40px); /* responsive subheading */
     }
 
     table {
       border-collapse: collapse;
       margin: 20px auto;
-      font-size: 17px; /* slightly bigger table text */
-    }
-
-    table, th, td {
-      border: 1px solid #999;
-      padding: 14px; /* a bit more padding for readability */
+      font-size: clamp(16px, 3.5vw, 20px); /* responsive table text */
     }
 
     th {
       background: #f4f4f4;
-      font-size: 18px; /* slightly bigger table headings */
+      font-size: clamp(17px, 3.8vw, 22px); /* responsive table headers */
     }
 
-    h1 {
-      color: #333;
-      font-size: 2.7em; /* slightly bigger main heading */
-    }
-
-    h2 {
-      color: #333;
-      font-size: 2.2em; /* slightly bigger subheadings */
-    }
-
-    p {
-      font-size: 1.3em; /* slightly bigger paragraph text */
+    table, th, td {
+      border: 1px solid #999;
+      padding: clamp(10px, 2vw, 16px); /* responsive padding */
     }
   </style>
 </head>
