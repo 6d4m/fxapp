@@ -16,17 +16,51 @@
   }
   h1 { font-size: 45px; margin-bottom: 20px; }
   h2 { font-size: 35px; margin: 20px 0; text-shadow: 1px 1px 5px #000; }
+
+  /* Countdown Circles */
   #countdown-container { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:20px 0; }
-  .circle-wrapper { position: relative; width: 100px; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .circle-wrapper svg { position: absolute; top:0; left:0; }
-  .circle-wrapper div { position: absolute; font-size: 22px; font-weight: bold; color:#fff; text-shadow:0 0 5px #000; }
-  table { border-collapse: separate; border-spacing: 0; margin: 20px auto; font-size: 20px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; width: 90%; max-width: 650px; }
-  th, td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: center; }
+  .circle-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+  .circle-wrapper svg { position: absolute; top: 0; left: 0; }
+  .circle-wrapper .circle-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 5px #000;
+  }
+  .circle-wrapper .circle-label {
+    position: static;
+    margin-top: 105px;
+    font-size: 12px;
+    color: #fff;
+  }
+
+  /* Sessions Table */
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px auto;
+    font-size: 20px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    width: 90%;
+    max-width: 650px;
+  }
+  th, td { padding: 16px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); }
   th { background: rgba(255,255,255,0.2); font-size: 22px; }
   td[id$="-status"] { font-size: 26px; font-weight: bold; border-radius: 8px; }
   td[id$="-status"].open { background: rgba(107,203,119,0.3); color: #6BCB77; }
   td[id$="-status"].closing { background: rgba(255,203,107,0.3); color: #FFCB6B; }
   td[id$="-status"].closed { background: rgba(255,107,107,0.3); color: #FF6B6B; }
+
+  /* Forex Tickers */
   .ticker-card{
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(8px);
@@ -141,8 +175,8 @@
     const radius=45;
     const circleBg=document.createElementNS(svgNS,"circle"); circleBg.setAttribute("cx",50); circleBg.setAttribute("cy",50); circleBg.setAttribute("r",radius); circleBg.setAttribute("stroke","#eee"); circleBg.setAttribute("stroke-width","8"); circleBg.setAttribute("fill","none"); svg.appendChild(circleBg);
     const circle=document.createElementNS(svgNS,"circle"); circle.setAttribute("cx",50); circle.setAttribute("cy",50); circle.setAttribute("r",radius); circle.setAttribute("stroke",colors[id]); circle.setAttribute("stroke-width","8"); circle.setAttribute("fill","none"); circle.setAttribute("stroke-dasharray",2*Math.PI*radius); circle.setAttribute("stroke-dashoffset",2*Math.PI*radius); circle.setAttribute("transform","rotate(-90 50 50)"); circle.id=id+'-circle'; svg.appendChild(circle);
-    const text=document.createElement('div'); text.id=id; wrapper.appendChild(svg); wrapper.appendChild(text);
-    const label=document.createElement('div'); label.innerText=id; label.style.fontSize='12px'; label.style.color='#fff'; wrapper.appendChild(label);
+    const text=document.createElement('div'); text.id=id; text.className='circle-text'; wrapper.appendChild(svg); wrapper.appendChild(text);
+    const label=document.createElement('div'); label.innerText=id; label.className='circle-label'; wrapper.appendChild(label);
     countdownContainer.appendChild(wrapper);
   }
   units.forEach(createCircle);
