@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Forex Toolkit</title>
+  <title>أدوات سوق الفوركس</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,7 +18,7 @@
     #theme-toggle {
       position: fixed;
       top: 10px;
-      right: 10px;
+      left: 10px;
       background: #fff;
       color: #1e3c72;
       border: none;
@@ -50,20 +50,51 @@
     td[id$="-status"]:hover { filter: brightness(1.2); cursor: default; }
     .tooltip { position: absolute; bottom: -25px; font-size: 12px; background: rgba(0,0,0,0.6); padding: 3px 6px; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
     .circle-wrapper:hover .tooltip { opacity: 1; }
+    .ticker-card{
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      padding: 15px 20px;
+      border-radius: 12px;
+      min-width: 150px;
+      text-align:center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin: 5px;
+    }
+    .ticker-card:hover{
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    }
+    .ticker-session{
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .ticker-price{
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .ticker-change{
+      font-size: 16px;
+      margin-top: 5px;
+      transition: all 0.5s;
+    }
+    .ticker-up{ color:#6BCB77; }
+    .ticker-down{ color:#FF6B6B; }
     @media (max-width: 500px){ #countdown-container { gap: 10px; } .circle-wrapper { width: 80px; height: 80px; } }
   </style>
 </head>
 <body>
-  <button id="theme-toggle">Toggle Theme</button>
-  <h1>🌍 Forex Market Toolkit</h1>
+  <button id="theme-toggle">تبديل الوضع</button>
+  <h1>🌍 أدوات سوق الفوركس</h1>
 
-  <h2>⏳ Market Countdown</h2>
+  <h2>⏳ العد التنازلي للسوق</h2>
   <div id="countdown-container"></div>
 
   <script>
     const countdownContainer = document.getElementById('countdown-container');
-    const units = ['Days','Hours','Minutes','Seconds'];
-    const colors = {Days:'#FF6B6B', Hours:'#FFD93D', Minutes:'#6BCB77', Seconds:'#4D96FF'};
+    const units = ['الأيام','الساعات','الدقائق','الثواني'];
+    const colors = {'الأيام':'#FF6B6B', 'الساعات':'#FFD93D', 'الدقائق':'#6BCB77', 'الثواني':'#4D96FF'};
     function createCircle(id){
       const wrapper = document.createElement('div'); wrapper.className = 'circle-wrapper pulse-circle';
       const svgNS = "http://www.w3.org/2000/svg"; const svg = document.createElementNS(svgNS,"svg"); svg.setAttribute("width","100"); svg.setAttribute("height","100");
@@ -84,10 +115,10 @@
     function updateCountdown(){
       const now = new Date(); const target = getNextMarketOpen(); const diff = target-now; const totalSeconds = Math.floor(diff/1000);
       const days = Math.floor(totalSeconds/(3600*24)); const hours = Math.floor((totalSeconds%(3600*24))/3600); const minutes = Math.floor((totalSeconds%3600)/60); const seconds = totalSeconds%60;
-      const values = {Days:days, Hours:hours, Minutes:minutes, Seconds:seconds}; const maxValues = {Days:365, Hours:24, Minutes:60, Seconds:60};
+      const values = {'الأيام':days, 'الساعات':hours, 'الدقائق':minutes, 'الثواني':seconds}; const maxValues = {'الأيام':365, 'الساعات':24, 'الدقائق':60, 'الثواني':60};
       units.forEach(unit=>{
         document.getElementById(unit).innerText=values[unit].toString().padStart(2,'0');
-        document.getElementById(unit+'-tooltip').innerText=values[unit]+' '+unit+' left';
+        document.getElementById(unit+'-tooltip').innerText='متبقي '+values[unit]+' '+unit;
         const circle=document.getElementById(unit+'-circle'); const radius=circle.r.baseVal.value;
         const circumference=2*Math.PI*radius; const offset=circumference-(values[unit]/maxValues[unit])*circumference;
         circle.setAttribute('stroke-dashoffset',offset);
@@ -97,22 +128,38 @@
   </script>
 
   <hr>
-  <h2>📊 Forex Market Sessions (UTC)</h2>
+  <h2>📊 الجلسات في السوق (UTC)</h2>
   <table>
-    <tr><th>Session</th><th>Open</th><th>Close</th><th>Status</th></tr>
-    <tr><td>Sydney</td><td>22:00</td><td>07:00</td><td id="sydney-status" class="closed">Loading…</td></tr>
-    <tr><td>Tokyo</td><td>00:00</td><td>09:00</td><td id="tokyo-status" class="closed">Loading…</td></tr>
-    <tr><td>London</td><td>08:00</td><td>17:00</td><td id="london-status" class="closed">Loading…</td></tr>
-    <tr><td>New York</td><td>13:00</td><td>22:00</td><td id="ny-status" class="closed">Loading…</td></tr>
+    <tr><th>الجلسة</th><th>فتح</th><th>إغلاق</th><th>الحالة</th></tr>
+    <tr><td>سيدني</td><td>22:00</td><td>07:00</td><td id="sydney-status" class="closed">جار التحميل…</td></tr>
+    <tr><td>طوكيو</td><td>00:00</td><td>09:00</td><td id="tokyo-status" class="closed">جار التحميل…</td></tr>
+    <tr><td>لندن</td><td>08:00</td><td>17:00</td><td id="london-status" class="closed">جار التحميل…</td></tr>
+    <tr><td>نيويورك</td><td>13:00</td><td>22:00</td><td id="ny-status" class="closed">جار التحميل…</td></tr>
   </table>
 
-  <!-- Live FX Tickers -->
-  <h2>💱 Live Forex Prices</h2>
-  <div id="forex-tickers" style="max-width:650px;margin:0 auto;text-align:left;font-size:18px;">
-    <div>Sydney: <span id="sydney-ticker">Loading…</span></div>
-    <div>Tokyo: <span id="tokyo-ticker">Loading…</span></div>
-    <div>London: <span id="london-ticker">Loading…</span></div>
-    <div>New York: <span id="ny-ticker">Loading…</span></div>
+  <!-- Modern FX Tickers -->
+  <h2>💱 أسعار فوركس مباشرة</h2>
+  <div id="forex-tickers" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; max-width:800px; margin:0 auto;">
+    <div class="ticker-card" id="sydney-card">
+      <div class="ticker-session">سيدني</div>
+      <div class="ticker-price" id="sydney-ticker">جار التحميل…</div>
+      <div class="ticker-change" id="sydney-change">--</div>
+    </div>
+    <div class="ticker-card" id="tokyo-card">
+      <div class="ticker-session">طوكيو</div>
+      <div class="ticker-price" id="tokyo-ticker">جار التحميل…</div>
+      <div class="ticker-change" id="tokyo-change">--</div>
+    </div>
+    <div class="ticker-card" id="london-card">
+      <div class="ticker-session">لندن</div>
+      <div class="ticker-price" id="london-ticker">جار التحميل…</div>
+      <div class="ticker-change" id="london-change">--</div>
+    </div>
+    <div class="ticker-card" id="ny-card">
+      <div class="ticker-session">نيويورك</div>
+      <div class="ticker-price" id="ny-ticker">جار التحميل…</div>
+      <div class="ticker-change" id="ny-change">--</div>
+    </div>
   </div>
 
   <script>
@@ -129,64 +176,30 @@
         const cell = document.getElementById(s.id);
         const timeToClose=(s.close-hour+24)%24;
         if(checkSession(s.open,s.close,hour)){
-          if(timeToClose<=1){ cell.innerText="CLOSING ⚠️"; cell.classList.add('closing'); cell.classList.remove('open','closed'); }
-          else { cell.innerText="OPEN ✅"; cell.classList.add('open'); cell.classList.remove('closing','closed'); }
-        }else{ cell.innerText="CLOSED ❌"; cell.classList.add('closed'); cell.classList.remove('open','closing'); }
+          if(timeToClose<=1){ cell.innerText="يغلق ⚠️"; cell.classList.add('closing'); cell.classList.remove('open','closed'); }
+          else { cell.innerText="مفتوح ✅"; cell.classList.add('open'); cell.classList.remove('closing','closed'); }
+        }else{ cell.innerText="مغلق ❌"; cell.classList.add('closed'); cell.classList.remove('open','closing'); }
       });
     }
     setInterval(updateSessions,30000); updateSessions();
 
     // FX Ticker Simulation
-    function getRandomPrice(base, variance=0.002){ return (base + (Math.random()*variance*2-variance)).toFixed(5); }
+    let previousPrices = {sydney:1.12000, tokyo:1.12050, london:1.12100, ny:1.12150};
+    function getRandomPrice(base, variance=0.002){ return +(base + (Math.random()*variance*2 - variance)).toFixed(5); }
     function updateTickers(){
-      document.getElementById('sydney-ticker').innerText='EUR/USD: '+getRandomPrice(1.12000);
-      document.getElementById('tokyo-ticker').innerText='EUR/USD: '+getRandomPrice(1.12050);
-      document.getElementById('london-ticker').innerText='EUR/USD: '+getRandomPrice(1.12100);
-      document.getElementById('ny-ticker').innerText='EUR/USD: '+getRandomPrice(1.12150);
+      const sessions = ['sydney','tokyo','london','ny'];
+      sessions.forEach(session=>{
+        const price = getRandomPrice(previousPrices[session]);
+        const change = price - previousPrices[session];
+        document.getElementById(session+'-ticker').innerText = price;
+        const changeEl = document.getElementById(session+'-change');
+        changeEl.innerHTML = (change>0? '▲ ':'▼ ') + Math.abs(change).toFixed(5);
+        changeEl.className = 'ticker-change ' + (change>=0?'ticker-up':'ticker-down');
+        previousPrices[session] = price;
+      });
     }
     setInterval(updateTickers,2000); updateTickers();
-  </script>
 
-  <hr>
-  <h2>📈 Live Forex Chart</h2>
-  <div class="tradingview-widget-container">
-    <div id="tradingview_12345"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-    <script type="text/javascript">
-      new TradingView.widget({
-        "width": "100%",
-        "height": 500,
-        "symbol": "FX:EURUSD",
-        "interval": "30",
-        "timezone": "Etc/UTC",
-        "theme": "light",
-        "style": "1",
-        "locale": "en",
-        "toolbar_bg": "#f1f3f6",
-        "enable_publishing": false,
-        "hide_top_toolbar": false,
-        "save_image": false,
-        "container_id": "tradingview_12345"
-      });
-    </script>
-  </div>
-
-  <hr>
-  <h2>📰 Economic Calendar</h2>
-  <div class="tradingview-widget-container">
-    <div id="economic-calendar"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-    {
-      "width": "100%",
-      "height": "600",
-      "locale": "en",
-      "importanceFilter": "-1,0,1",
-      "countryFilter": "us,eu,jp,gb,au"
-    }
-    </script>
-  </div>
-
-  <script>
     // Dark/light theme toggle
     const toggleBtn=document.getElementById('theme-toggle');
     let dark=true;
@@ -195,5 +208,6 @@
       else{ document.body.style.background='linear-gradient(135deg, #1e3c72, #2a5298)'; document.body.style.color='#fff'; dark=true; }
     });
   </script>
+
 </body>
 </html>
