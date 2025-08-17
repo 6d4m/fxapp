@@ -9,37 +9,49 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
-      font-size: clamp(18px, 4vw, 22px); /* scales on mobile */
-    }
-
-    p {
-      font-size: clamp(19px, 4.5vw, 24px);
+      font-size: 20px; /* larger base text for WebView */
     }
 
     h1 {
       color: #333;
-      font-size: clamp(36px, 8vw, 50px); /* responsive main heading */
+      font-size: 45px; /* bigger main heading for WebView */
     }
 
     h2 {
       color: #333;
-      font-size: clamp(28px, 6vw, 40px); /* responsive subheading */
+      font-size: 35px; /* bigger subheadings */
+    }
+
+    p {
+      font-size: 24px; /* slightly bigger paragraph text */
+    }
+
+    #countdown {
+      font-size: 36px; /* countdown bigger */
+      font-weight: bold;
+      color: #d33; /* red to make it stand out */
+      margin: 10px 0;
     }
 
     table {
       border-collapse: collapse;
       margin: 20px auto;
-      font-size: clamp(16px, 3.5vw, 20px); /* responsive table text */
+      font-size: 22px; /* table text bigger for WebView */
     }
 
     th {
       background: #f4f4f4;
-      font-size: clamp(17px, 3.8vw, 22px); /* responsive table headers */
+      font-size: 24px; /* table headers bigger */
     }
 
     table, th, td {
       border: 1px solid #999;
-      padding: clamp(10px, 2vw, 16px); /* responsive padding */
+      padding: 16px; /* more padding for readability */
+    }
+
+    td[id$="-status"] {
+      font-size: 30px; /* session statuses bigger */
+      font-weight: bold;
     }
   </style>
 </head>
