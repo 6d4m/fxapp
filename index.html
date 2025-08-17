@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forex Toolkit App</title>
+</head>
+<body style="font-family: Arial, sans-serif; text-align:center; margin:20px;">
+  <h1>📊 Forex Toolkit</h1>
+  <p>Market Hours Countdown + Economic Calendar + News + Heatmap</p>
+
+  <!-- Market Hours Countdown -->
+  <h2>⏰ Market Countdown</h2>
+  <div id="countdown"></div>
+
+  <script>
+    function updateCountdown() {
+      const now = new Date();
+      const day = now.getUTCDay();
+      const hour = now.getUTCHours();
+      const minutes = now.getUTCMinutes();
+      const seconds = now.getUTCSeconds();
+      let target;
+
+      // Market closes Friday 21:00 UTC, opens Sunday 22:00 UTC
+      if (day === 5 && hour >= 21 || day === 6 || (day === 0 && hour < 22)) {
+        // Closed → countdown to Sunday 22:00 UTC
+        target = new Date();
+        target.setUTCDate(now.getUTCDate() + ((7 - day) % 7));
+        target.setUTCHours(22,0,0,0);
+      } else {
+        document.getElementById("countdown").innerText = "Market is OPEN";
+        return;
+      }
+
+      let diff = target - now;
+      let h = Math.floor(diff / 1000 / 60 / 60);
+      let m = Math.floor(diff / 1000 / 60) % 60;
+      let s = Math.floor(diff / 1000) % 60;
+      document.getElementById("countdown").innerText = h + "h " + m + "m " + s + "s";
+    }
+    setInterval(updateCountdown, 1000);
+  </script>
+
+  <hr>
+
+  <!-- TradingView Economic Calendar -->
+  <h2>📅 Economic Calendar</h2>
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+    {
+      "colorTheme": "light",
+      "isTransparent": false,
+      "width": "100%",
+      "height": "400",
+      "locale": "en"
+    }
+    </script>
+  </div>
+
+  <hr>
+
+  <!-- TradingView Forex Heatmap -->
+  <h2>🔥 Forex Heat Map</h2>
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
+    {
+      "width": "100%",
+      "height": "400",
+      "currencies": ["EUR","USD","JPY","GBP","AUD","CAD","CHF","NZD"],
+      "colorTheme": "light",
+      "locale": "en"
+    }
+    </script>
+  </div>
+
+  <hr>
+
+  <!-- TradingView Forex News -->
+  <h2>📰 Forex News</h2>
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+    {
+      "feedMode": "market",
+      "market": "forex",
+      "isTransparent": false,
+      "displayMode": "regular",
+      "width": "100%",
+      "height": "400",
+      "colorTheme": "light",
+      "locale": "en"
+    }
+    </script>
+  </div>
+
+</body>
+</html>
