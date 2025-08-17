@@ -4,11 +4,42 @@
   <meta charset="UTF-8">
   <title>Forex Toolkit</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-    table { border-collapse: collapse; margin: 20px auto; }
-    table, th, td { border: 1px solid #999; padding: 10px; }
-    th { background: #f4f4f4; }
-    h1, h2 { color: #333; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+      font-size: 19px; /* slightly bigger base text */
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-size: 17px; /* slightly bigger table text */
+    }
+
+    table, th, td {
+      border: 1px solid #999;
+      padding: 14px; /* a bit more padding for readability */
+    }
+
+    th {
+      background: #f4f4f4;
+      font-size: 18px; /* slightly bigger table headings */
+    }
+
+    h1 {
+      color: #333;
+      font-size: 2.7em; /* slightly bigger main heading */
+    }
+
+    h2 {
+      color: #333;
+      font-size: 2.2em; /* slightly bigger subheadings */
+    }
+
+    p {
+      font-size: 1.3em; /* slightly bigger paragraph text */
+    }
   </style>
 </head>
 <body>
@@ -18,33 +49,33 @@
   <p id="countdown">Loading...</p>
 
   <script>
-  function updateCountdown() {
-    const now = new Date();
-    const day = now.getUTCDay();
-    const hour = now.getUTCHours();
-    let target;
+    function updateCountdown() {
+      const now = new Date();
+      const day = now.getUTCDay();
+      const hour = now.getUTCHours();
+      let target;
 
-    if (day === 5 && hour >= 22 || day === 6) {
-      target = new Date(now);
-      target.setUTCDate(now.getUTCDate() + ((1 + 7 - day) % 7));
-      target.setUTCHours(22, 0, 0, 0);
-    } else if (day === 0 && hour < 22) {
-      target = new Date(now);
-      target.setUTCHours(22, 0, 0, 0);
-    } else {
-      document.getElementById("countdown").innerText = "✅ Market is OPEN";
-      return;
+      if (day === 5 && hour >= 22 || day === 6) {
+        target = new Date(now);
+        target.setUTCDate(now.getUTCDate() + ((1 + 7 - day) % 7));
+        target.setUTCHours(22, 0, 0, 0);
+      } else if (day === 0 && hour < 22) {
+        target = new Date(now);
+        target.setUTCHours(22, 0, 0, 0);
+      } else {
+        document.getElementById("countdown").innerText = "✅ Market is OPEN";
+        return;
+      }
+
+      const diff = target - now;
+      const h = Math.floor(diff / 1000 / 60 / 60);
+      const m = Math.floor((diff / 1000 / 60) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      document.getElementById("countdown").innerText =
+        h + "h " + m + "m " + s + "s until market opens";
     }
-
-    const diff = target - now;
-    const h = Math.floor(diff / 1000 / 60 / 60);
-    const m = Math.floor((diff / 1000 / 60) % 60);
-    const s = Math.floor((diff / 1000) % 60);
-    document.getElementById("countdown").innerText =
-      h + "h " + m + "m " + s + "s until market opens";
-  }
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
   </script>
 
   <hr>
@@ -60,18 +91,18 @@
   </table>
 
   <script>
-  function checkSession(open, close, hour) {
-    return (open < close) ? (hour >= open && hour < close) : (hour >= open || hour < close);
-  }
-  function updateSessions() {
-    const hour = new Date().getUTCHours();
-    document.getElementById("sydney-status").innerText = checkSession(22, 7, hour) ? "OPEN ✅" : "CLOSED ❌";
-    document.getElementById("tokyo-status").innerText = checkSession(0, 9, hour) ? "OPEN ✅" : "CLOSED ❌";
-    document.getElementById("london-status").innerText = checkSession(8, 17, hour) ? "OPEN ✅" : "CLOSED ❌";
-    document.getElementById("ny-status").innerText = checkSession(13, 22, hour) ? "OPEN ✅" : "CLOSED ❌";
-  }
-  setInterval(updateSessions, 60000);
-  updateSessions();
+    function checkSession(open, close, hour) {
+      return (open < close) ? (hour >= open && hour < close) : (hour >= open || hour < close);
+    }
+    function updateSessions() {
+      const hour = new Date().getUTCHours();
+      document.getElementById("sydney-status").innerText = checkSession(22, 7, hour) ? "OPEN ✅" : "CLOSED ❌";
+      document.getElementById("tokyo-status").innerText = checkSession(0, 9, hour) ? "OPEN ✅" : "CLOSED ❌";
+      document.getElementById("london-status").innerText = checkSession(8, 17, hour) ? "OPEN ✅" : "CLOSED ❌";
+      document.getElementById("ny-status").innerText = checkSession(13, 22, hour) ? "OPEN ✅" : "CLOSED ❌";
+    }
+    setInterval(updateSessions, 60000);
+    updateSessions();
   </script>
 
   <hr>
