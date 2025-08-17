@@ -1,213 +1,203 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>أدوات سوق الفوركس</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-      font-size: 18px;
-      color: #fff;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      transition: background 1s ease;
-    }
-    #theme-toggle {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: #fff;
-      color: #1e3c72;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 1000;
-    }
-    h1 { font-size: 45px; margin-bottom: 20px; }
-    h2 { font-size: 35px; margin: 20px 0; text-shadow: 1px 1px 5px #000; }
-    #countdown-container { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:20px 0; }
-    .circle-wrapper { position: relative; width: 100px; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.5s ease; }
-    .pulse-circle { animation: pulseCircle 1.5s infinite alternate; }
-    @keyframes pulseCircle {
-      0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
-      50% { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(255,255,255,0.8)); }
-      100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
-    }
-    table { border-collapse: separate; border-spacing: 0; margin: 20px auto; font-size: 20px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; width: 90%; max-width: 650px; }
-    th, td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: center; position: relative; }
-    th { background: rgba(255,255,255,0.2); font-size: 22px; }
-    tr:last-child td { border-bottom: none; }
-    td[id$="-status"] { font-size: 26px; font-weight: bold; border-radius: 8px; transition: all 0.3s; }
-    td[id$="-status"].open { background: rgba(107,203,119,0.3); color: #6BCB77; animation: pulse 1.5s infinite alternate; }
-    td[id$="-status"].closing { background: rgba(255, 203, 107,0.3); color: #FFCB6B; animation: pulse 1.5s infinite alternate; }
-    td[id$="-status"].closed { background: rgba(255,107,107,0.3); color: #FF6B6B; }
-    @keyframes pulse { 0% { box-shadow: 0 0 10px rgba(107,203,119,0.5); } 50% { box-shadow: 0 0 20px rgba(107,203,119,0.8); } 100% { box-shadow: 0 0 10px rgba(107,203,119,0.5); } }
-    td[id$="-status"]:hover { filter: brightness(1.2); cursor: default; }
-    .tooltip { position: absolute; bottom: -25px; font-size: 12px; background: rgba(0,0,0,0.6); padding: 3px 6px; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-    .circle-wrapper:hover .tooltip { opacity: 1; }
-    .ticker-card{
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      padding: 15px 20px;
-      border-radius: 12px;
-      min-width: 150px;
-      text-align:center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      transition: transform 0.3s, box-shadow 0.3s;
-      margin: 5px;
-    }
-    .ticker-card:hover{
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-    }
-    .ticker-session{
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-    .ticker-price{
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .ticker-change{
-      font-size: 16px;
-      margin-top: 5px;
-      transition: all 0.5s;
-    }
-    .ticker-up{ color:#6BCB77; }
-    .ticker-down{ color:#FF6B6B; }
-    @media (max-width: 500px){ #countdown-container { gap: 10px; } .circle-wrapper { width: 80px; height: 80px; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أدوات سوق الفوركس</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    font-size: 18px;
+    color: #fff;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+  }
+  h1 { font-size: 45px; margin-bottom: 20px; }
+  h2 { font-size: 35px; margin: 20px 0; text-shadow: 1px 1px 5px #000; }
+  #countdown-container { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:20px 0; }
+  .circle-wrapper { position: relative; width: 100px; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .circle-wrapper svg { position: absolute; top:0; left:0; }
+  .circle-wrapper div { position: absolute; font-size: 22px; font-weight: bold; color:#fff; text-shadow:0 0 5px #000; }
+  table { border-collapse: separate; border-spacing: 0; margin: 20px auto; font-size: 20px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; width: 90%; max-width: 650px; }
+  th, td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: center; }
+  th { background: rgba(255,255,255,0.2); font-size: 22px; }
+  td[id$="-status"] { font-size: 26px; font-weight: bold; border-radius: 8px; }
+  td[id$="-status"].open { background: rgba(107,203,119,0.3); color: #6BCB77; }
+  td[id$="-status"].closing { background: rgba(255,203,107,0.3); color: #FFCB6B; }
+  td[id$="-status"].closed { background: rgba(255,107,107,0.3); color: #FF6B6B; }
+  .ticker-card{
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    padding: 15px 20px;
+    border-radius: 12px;
+    min-width: 150px;
+    text-align:center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    margin:5px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .ticker-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  }
+  .ticker-session{ font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+  .ticker-price{ font-size: 22px; font-weight: bold; }
+  .ticker-change{ font-size: 16px; margin-top: 5px; transition: all 0.5s; }
+  .ticker-up{ color:#6BCB77; }
+  .ticker-down{ color:#FF6B6B; }
+</style>
 </head>
 <body>
-  <button id="theme-toggle">تبديل الوضع</button>
-  <h1>🌍 أدوات سوق الفوركس</h1>
 
-  <h2>⏳ العد التنازلي للسوق</h2>
-  <div id="countdown-container"></div>
+<h1>🌍 أدوات سوق الفوركس</h1>
 
-  <script>
-    const countdownContainer = document.getElementById('countdown-container');
-    const units = ['الأيام','الساعات','الدقائق','الثواني'];
-    const colors = {'الأيام':'#FF6B6B', 'الساعات':'#FFD93D', 'الدقائق':'#6BCB77', 'الثواني':'#4D96FF'};
-    function createCircle(id){
-      const wrapper = document.createElement('div'); wrapper.className = 'circle-wrapper pulse-circle';
-      const svgNS = "http://www.w3.org/2000/svg"; const svg = document.createElementNS(svgNS,"svg"); svg.setAttribute("width","100"); svg.setAttribute("height","100");
-      const radius = 45;
-      const circleBg = document.createElementNS(svgNS,"circle"); circleBg.setAttribute("cx",50); circleBg.setAttribute("cy",50); circleBg.setAttribute("r",radius); circleBg.setAttribute("stroke","#eee"); circleBg.setAttribute("stroke-width","8"); circleBg.setAttribute("fill","none"); svg.appendChild(circleBg);
-      const circle = document.createElementNS(svgNS,"circle"); circle.setAttribute("cx",50); circle.setAttribute("cy",50); circle.setAttribute("r",radius); circle.setAttribute("stroke",colors[id]); circle.setAttribute("stroke-width","8"); circle.setAttribute("fill","none"); circle.setAttribute("stroke-dasharray",2*Math.PI*radius); circle.setAttribute("stroke-dashoffset",2*Math.PI*radius); circle.setAttribute("transform","rotate(-90 50 50)"); circle.id=id+'-circle'; svg.appendChild(circle);
-      const text = document.createElement('div'); text.id=id; text.style.position='absolute'; text.style.fontSize='22px'; text.style.fontWeight='bold'; text.style.color='#fff'; text.style.textShadow='0 0 5px #000'; wrapper.appendChild(svg); wrapper.appendChild(text);
-      const tooltip = document.createElement('div'); tooltip.className='tooltip'; tooltip.id=id+'-tooltip'; wrapper.appendChild(tooltip);
-      const label = document.createElement('div'); label.innerText=id; label.style.fontSize='12px'; label.style.color='#fff'; wrapper.appendChild(label);
-      countdownContainer.appendChild(wrapper);
-    }
-    units.forEach(createCircle);
-    function getNextMarketOpen(){
-      const now = new Date(); let target = new Date(); target.setUTCHours(22,0,0,0);
-      if(now.getUTCDay()===5 && now.getUTCHours()>=22 || now.getUTCDay()===6){ target.setUTCDate(now.getUTCDate() + ((1+7-now.getUTCDay())%7)); }
-      if(now>=target) target.setUTCDate(target.getUTCDate()+1); return target;
-    }
-    function updateCountdown(){
-      const now = new Date(); const target = getNextMarketOpen(); const diff = target-now; const totalSeconds = Math.floor(diff/1000);
-      const days = Math.floor(totalSeconds/(3600*24)); const hours = Math.floor((totalSeconds%(3600*24))/3600); const minutes = Math.floor((totalSeconds%3600)/60); const seconds = totalSeconds%60;
-      const values = {'الأيام':days, 'الساعات':hours, 'الدقائق':minutes, 'الثواني':seconds}; const maxValues = {'الأيام':365, 'الساعات':24, 'الدقائق':60, 'الثواني':60};
-      units.forEach(unit=>{
-        document.getElementById(unit).innerText=values[unit].toString().padStart(2,'0');
-        document.getElementById(unit+'-tooltip').innerText='متبقي '+values[unit]+' '+unit;
-        const circle=document.getElementById(unit+'-circle'); const radius=circle.r.baseVal.value;
-        const circumference=2*Math.PI*radius; const offset=circumference-(values[unit]/maxValues[unit])*circumference;
-        circle.setAttribute('stroke-dashoffset',offset);
-      });
-    }
-    setInterval(updateCountdown,50); updateCountdown();
-  </script>
+<h2>⏳ العد التنازلي للسوق</h2>
+<div id="countdown-container"></div>
 
-  <hr>
-  <h2>📊 الجلسات في السوق (UTC)</h2>
-  <table>
-    <tr><th>الجلسة</th><th>فتح</th><th>إغلاق</th><th>الحالة</th></tr>
-    <tr><td>سيدني</td><td>22:00</td><td>07:00</td><td id="sydney-status" class="closed">جار التحميل…</td></tr>
-    <tr><td>طوكيو</td><td>00:00</td><td>09:00</td><td id="tokyo-status" class="closed">جار التحميل…</td></tr>
-    <tr><td>لندن</td><td>08:00</td><td>17:00</td><td id="london-status" class="closed">جار التحميل…</td></tr>
-    <tr><td>نيويورك</td><td>13:00</td><td>22:00</td><td id="ny-status" class="closed">جار التحميل…</td></tr>
-  </table>
+<hr>
+<h2>📊 الجلسات في السوق (UTC)</h2>
+<table>
+  <tr><th>الجلسة</th><th>فتح</th><th>إغلاق</th><th>الحالة</th></tr>
+  <tr><td>سيدني</td><td>22:00</td><td>07:00</td><td id="sydney-status" class="closed">جار التحميل…</td></tr>
+  <tr><td>طوكيو</td><td>00:00</td><td>09:00</td><td id="tokyo-status" class="closed">جار التحميل…</td></tr>
+  <tr><td>لندن</td><td>08:00</td><td>17:00</td><td id="london-status" class="closed">جار التحميل…</td></tr>
+  <tr><td>نيويورك</td><td>13:00</td><td>22:00</td><td id="ny-status" class="closed">جار التحميل…</td></tr>
+</table>
 
-  <!-- Modern FX Tickers -->
-  <h2>💱 أسعار فوركس مباشرة</h2>
-  <div id="forex-tickers" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; max-width:800px; margin:0 auto;">
-    <div class="ticker-card" id="sydney-card">
-      <div class="ticker-session">سيدني</div>
-      <div class="ticker-price" id="sydney-ticker">جار التحميل…</div>
-      <div class="ticker-change" id="sydney-change">--</div>
-    </div>
-    <div class="ticker-card" id="tokyo-card">
-      <div class="ticker-session">طوكيو</div>
-      <div class="ticker-price" id="tokyo-ticker">جار التحميل…</div>
-      <div class="ticker-change" id="tokyo-change">--</div>
-    </div>
-    <div class="ticker-card" id="london-card">
-      <div class="ticker-session">لندن</div>
-      <div class="ticker-price" id="london-ticker">جار التحميل…</div>
-      <div class="ticker-change" id="london-change">--</div>
-    </div>
-    <div class="ticker-card" id="ny-card">
-      <div class="ticker-session">نيويورك</div>
-      <div class="ticker-price" id="ny-ticker">جار التحميل…</div>
-      <div class="ticker-change" id="ny-change">--</div>
-    </div>
+<hr>
+<h2>💱 أسعار فوركس مباشرة</h2>
+<div id="forex-tickers" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; max-width:800px; margin:0 auto;">
+  <div class="ticker-card" id="sydney-card">
+    <div class="ticker-session">سيدني</div>
+    <div class="ticker-price" id="sydney-ticker">جار التحميل…</div>
+    <div class="ticker-change" id="sydney-change">--</div>
   </div>
+  <div class="ticker-card" id="tokyo-card">
+    <div class="ticker-session">طوكيو</div>
+    <div class="ticker-price" id="tokyo-ticker">جار التحميل…</div>
+    <div class="ticker-change" id="tokyo-change">--</div>
+  </div>
+  <div class="ticker-card" id="london-card">
+    <div class="ticker-session">لندن</div>
+    <div class="ticker-price" id="london-ticker">جار التحميل…</div>
+    <div class="ticker-change" id="london-change">--</div>
+  </div>
+  <div class="ticker-card" id="ny-card">
+    <div class="ticker-session">نيويورك</div>
+    <div class="ticker-price" id="ny-ticker">جار التحميل…</div>
+    <div class="ticker-change" id="ny-change">--</div>
+  </div>
+</div>
 
-  <script>
-    function checkSession(open,close,hour){return(open<close)?(hour>=open && hour<close):(hour>=open||hour<close);}
-    function updateSessions(){
-      const hour=new Date().getUTCHours();
-      const sessions = [
-        {id:'sydney-status', open:22, close:7},
-        {id:'tokyo-status', open:0, close:9},
-        {id:'london-status', open:8, close:17},
-        {id:'ny-status', open:13, close:22}
-      ];
-      sessions.forEach(s=>{
-        const cell = document.getElementById(s.id);
-        const timeToClose=(s.close-hour+24)%24;
-        if(checkSession(s.open,s.close,hour)){
-          if(timeToClose<=1){ cell.innerText="يغلق ⚠️"; cell.classList.add('closing'); cell.classList.remove('open','closed'); }
-          else { cell.innerText="مفتوح ✅"; cell.classList.add('open'); cell.classList.remove('closing','closed'); }
-        }else{ cell.innerText="مغلق ❌"; cell.classList.add('closed'); cell.classList.remove('open','closing'); }
-      });
-    }
-    setInterval(updateSessions,30000); updateSessions();
-
-    // FX Ticker Simulation
-    let previousPrices = {sydney:1.12000, tokyo:1.12050, london:1.12100, ny:1.12150};
-    function getRandomPrice(base, variance=0.002){ return +(base + (Math.random()*variance*2 - variance)).toFixed(5); }
-    function updateTickers(){
-      const sessions = ['sydney','tokyo','london','ny'];
-      sessions.forEach(session=>{
-        const price = getRandomPrice(previousPrices[session]);
-        const change = price - previousPrices[session];
-        document.getElementById(session+'-ticker').innerText = price;
-        const changeEl = document.getElementById(session+'-change');
-        changeEl.innerHTML = (change>0? '▲ ':'▼ ') + Math.abs(change).toFixed(5);
-        changeEl.className = 'ticker-change ' + (change>=0?'ticker-up':'ticker-down');
-        previousPrices[session] = price;
-      });
-    }
-    setInterval(updateTickers,2000); updateTickers();
-
-    // Dark/light theme toggle
-    const toggleBtn=document.getElementById('theme-toggle');
-    let dark=true;
-    toggleBtn.addEventListener('click',()=>{
-      if(dark){ document.body.style.background='#f5f5f5'; document.body.style.color='#333'; dark=false; }
-      else{ document.body.style.background='linear-gradient(135deg, #1e3c72, #2a5298)'; document.body.style.color='#fff'; dark=true; }
+<hr>
+<h2>📈 مخطط فوركس مباشر</h2>
+<div class="tradingview-widget-container">
+  <div id="tradingview_chart"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+  <script type="text/javascript">
+    new TradingView.widget({
+      "width": "100%",
+      "height": 500,
+      "symbol": "FX:EURUSD",
+      "interval": "30",
+      "timezone": "Etc/UTC",
+      "theme": "light",
+      "style": "1",
+      "locale": "ar",
+      "toolbar_bg": "#f1f3f6",
+      "enable_publishing": false,
+      "hide_top_toolbar": false,
+      "save_image": false,
+      "container_id": "tradingview_chart"
     });
   </script>
+</div>
+
+<hr>
+<h2>📰 التقويم الاقتصادي</h2>
+<div class="tradingview-widget-container">
+  <div id="economic-calendar"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+  {
+    "width": "100%",
+    "height": "600",
+    "locale": "ar",
+    "importanceFilter": "-1,0,1",
+    "countryFilter": "us,eu,jp,gb,au"
+  }
+  </script>
+</div>
+
+<script>
+  // Countdown circles
+  const countdownContainer = document.getElementById('countdown-container');
+  const units = ['الأيام','الساعات','الدقائق','الثواني'];
+  const colors = {'الأيام':'#FF6B6B', 'الساعات':'#FFD93D', 'الدقائق':'#6BCB77', 'الثواني':'#4D96FF'};
+  function createCircle(id){
+    const wrapper = document.createElement('div'); wrapper.className='circle-wrapper';
+    const svgNS="http://www.w3.org/2000/svg"; const svg=document.createElementNS(svgNS,"svg"); svg.setAttribute("width","100"); svg.setAttribute("height","100");
+    const radius=45;
+    const circleBg=document.createElementNS(svgNS,"circle"); circleBg.setAttribute("cx",50); circleBg.setAttribute("cy",50); circleBg.setAttribute("r",radius); circleBg.setAttribute("stroke","#eee"); circleBg.setAttribute("stroke-width","8"); circleBg.setAttribute("fill","none"); svg.appendChild(circleBg);
+    const circle=document.createElementNS(svgNS,"circle"); circle.setAttribute("cx",50); circle.setAttribute("cy",50); circle.setAttribute("r",radius); circle.setAttribute("stroke",colors[id]); circle.setAttribute("stroke-width","8"); circle.setAttribute("fill","none"); circle.setAttribute("stroke-dasharray",2*Math.PI*radius); circle.setAttribute("stroke-dashoffset",2*Math.PI*radius); circle.setAttribute("transform","rotate(-90 50 50)"); circle.id=id+'-circle'; svg.appendChild(circle);
+    const text=document.createElement('div'); text.id=id; wrapper.appendChild(svg); wrapper.appendChild(text);
+    const label=document.createElement('div'); label.innerText=id; label.style.fontSize='12px'; label.style.color='#fff'; wrapper.appendChild(label);
+    countdownContainer.appendChild(wrapper);
+  }
+  units.forEach(createCircle);
+  function getNextMarketOpen(){
+    const now=new Date(); let target=new Date(); target.setUTCHours(22,0,0,0);
+    if(now.getUTCDay()===5 && now.getUTCHours()>=22 || now.getUTCDay()===6){ target.setUTCDate(now.getUTCDate()+((1+7-now.getUTCDay())%7)); }
+    if(now>=target) target.setUTCDate(target.getUTCDate()+1); return target;
+  }
+  function updateCountdown(){
+    const now=new Date(); const target=getNextMarketOpen(); const diff=target-now; const totalSeconds=Math.floor(diff/1000);
+    const days=Math.floor(totalSeconds/(3600*24)); const hours=Math.floor((totalSeconds%(3600*24))/3600); const minutes=Math.floor((totalSeconds%3600)/60); const seconds=totalSeconds%60;
+    const values={'الأيام':days,'الساعات':hours,'الدقائق':minutes,'الثواني':seconds};
+    const maxValues={'الأيام':365,'الساعات':24,'الدقائق':60,'الثواني':60};
+    units.forEach(unit=>{
+      document.getElementById(unit).innerText=values[unit].toString().padStart(2,'0');
+      const circle=document.getElementById(unit+'-circle'); const radius=circle.r.baseVal.value;
+      const circumference=2*Math.PI*radius; const offset=circumference-(values[unit]/maxValues[unit])*circumference;
+      circle.setAttribute('stroke-dashoffset',offset);
+    });
+  }
+  setInterval(updateCountdown,50); updateCountdown();
+
+  // Sessions
+  function checkSession(open,close,hour){return(open<close)?(hour>=open && hour<close):(hour>=open||hour<close);}
+  function updateSessions(){
+    const hour=new Date().getUTCHours();
+    const sessions=[{id:'sydney-status',open:22,close:7},{id:'tokyo-status',open:0,close:9},{id:'london-status',open:8,close:17},{id:'ny-status',open:13,close:22}];
+    sessions.forEach(s=>{
+      const cell=document.getElementById(s.id);
+      const timeToClose=(s.close-hour+24)%24;
+      if(checkSession(s.open,s.close,hour)){
+        if(timeToClose<=1){ cell.innerText="يغلق ⚠️"; cell.className='closing'; }
+        else{ cell.innerText="مفتوح ✅"; cell.className='open'; }
+      } else{ cell.innerText="مغلق ❌"; cell.className='closed'; }
+    });
+  }
+  setInterval(updateSessions,30000); updateSessions();
+
+  // FX Tickers simulation
+  let previousPrices={sydney:1.12000,tokyo:1.12050,london:1.12100,ny:1.12150};
+  function getRandomPrice(base,variance=0.002){ return +(base+(Math.random()*variance*2-variance)).toFixed(5);}
+  function updateTickers(){
+    const sessions=['sydney','tokyo','london','ny'];
+    sessions.forEach(session=>{
+      const price=getRandomPrice(previousPrices[session]);
+      const change=price-previousPrices[session];
+      document.getElementById(session+'-ticker').innerText=price;
+      const changeEl=document.getElementById(session+'-change');
+      changeEl.innerHTML=(change>0?'▲ ':'▼ ')+Math.abs(change).toFixed(5);
+      changeEl.className='ticker-change '+(change>=0?'ticker-up':'ticker-down');
+      previousPrices[session]=price;
+    });
+  }
+  setInterval(updateTickers,2000); updateTickers();
+</script>
 
 </body>
 </html>
